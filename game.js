@@ -217,6 +217,35 @@ function drawHUD() {
   ctx.font = '14px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
   ctx.fillText('BEST ' + state.best, canvas.width / 2, 105);
+  if (!state.running && !state.over) drawStartOverlay();
+  if (state.over) drawGameOverOverlay();
+}
+
+function drawStartOverlay() {
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 48px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('TOWER BLOCK', canvas.width / 2, canvas.height / 2 - 20);
+  ctx.font = '18px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText('Click, tap or press SPACE to start', canvas.width / 2, canvas.height / 2 + 20);
+}
+
+function drawGameOverOverlay() {
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.font = 'bold 48px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
+  ctx.fillStyle = '#fff';
+  ctx.font = '22px sans-serif';
+  ctx.fillText('Score: ' + state.score + '  ·  Best: ' + state.best, canvas.width / 2, canvas.height / 2 + 10);
+  ctx.font = '16px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillText('Click or press SPACE to retry', canvas.width / 2, canvas.height / 2 + 45);
 }
 
 initGame();

@@ -11,6 +11,8 @@ resize();
 
 const BLOCK_HEIGHT = 30;
 const INITIAL_BLOCK_WIDTH = 200;
+const MAX_SPEED = 9;
+const MIN_BLOCK_WIDTH = 8;
 function hslColor(i) {
   const hue = (i * 18) % 360;
   return `hsl(${hue}, 70%, 60%)`;
@@ -247,8 +249,13 @@ function dropBlock() {
     state.best = state.score;
     try { localStorage.setItem('tb_best', String(state.best)); } catch (_) {}
   }
-  state.speed += 0.15;
+  state.speed = Math.min(MAX_SPEED, state.speed + 0.15);
   if (!perfect) playPlace();
+  if (overlap < MIN_BLOCK_WIDTH) {
+    state.over = true;
+    onGameOver();
+    return;
+  }
   spawnCurrent();
 }
 

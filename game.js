@@ -234,6 +234,15 @@ function drawFragment(f) {
 }
 
 function render() {
+  if (state.shake && state.shake > 0) {
+    const sx = (Math.random() - 0.5) * state.shake;
+    const sy = (Math.random() - 0.5) * state.shake;
+    ctx.setTransform(DPR, 0, 0, DPR, sx * DPR, sy * DPR);
+    state.shake *= 0.85;
+    if (state.shake < 0.3) state.shake = 0;
+  } else {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
   drawBackground();
   updateCamera();
   updateFragments();
@@ -307,6 +316,7 @@ function onGameOver() {
 
 function onPerfect(block) {
   state.flash = 1;
+  state.shake = 6;
   for (let i = 0; i < 14; i++) {
     state.particles.push({
       x: block.x + Math.random() * block.width,

@@ -150,11 +150,26 @@ function updateCurrent() {
 }
 
 function drawBackground() {
+  const t = Math.min(1, state.score / 60);
+  const topColor = `hsl(${220 - t * 80}, 50%, ${15 + t * 10}%)`;
+  const botColor = `hsl(${230 - t * 80}, 40%, ${6 + t * 6}%)`;
   const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  grad.addColorStop(0, '#1a2238');
-  grad.addColorStop(1, '#0e1422');
+  grad.addColorStop(0, topColor);
+  grad.addColorStop(1, botColor);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawStars();
+}
+
+function drawStars() {
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  const offset = state.cameraY * 0.2;
+  for (let i = 0; i < 60; i++) {
+    const x = (i * 97) % canvas.width;
+    const y = ((i * 53 + offset) % canvas.height + canvas.height) % canvas.height;
+    const size = (i % 3 === 0) ? 2 : 1;
+    ctx.fillRect(x, y, size, size);
+  }
 }
 
 function updateCamera() {

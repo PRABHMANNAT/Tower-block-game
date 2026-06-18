@@ -2,9 +2,16 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
+const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+const view = { w: window.innerWidth, h: window.innerHeight };
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  view.w = window.innerWidth;
+  view.h = window.innerHeight;
+  canvas.width = view.w * DPR;
+  canvas.height = view.h * DPR;
+  canvas.style.width = view.w + 'px';
+  canvas.style.height = view.h + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 }
 window.addEventListener('resize', resize);
 resize();
@@ -125,8 +132,8 @@ function initGame() {
   state.direction = 1;
   state.cameraY = 0;
   state.over = false;
-  const baseX = (canvas.width - INITIAL_BLOCK_WIDTH) / 2;
-  const baseY = canvas.height - BLOCK_HEIGHT * 2;
+  const baseX = (view.w - INITIAL_BLOCK_WIDTH) / 2;
+  const baseY = view.h - BLOCK_HEIGHT * 2;
   state.blocks.push(Block(baseX, baseY, INITIAL_BLOCK_WIDTH, hslColor(0)));
   spawnCurrent();
 }
@@ -135,7 +142,7 @@ function spawnCurrent() {
   const top = state.blocks[state.blocks.length - 1];
   state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, hslColor(state.blocks.length));
   state.direction = Math.random() < 0.5 ? 1 : -1;
-  if (state.direction < 0) state.current.x = canvas.width - state.current.width;
+  if (state.direction < 0) state.current.x = view.w - state.current.width;
   // alternate axis: small bob effect for visual interest
   state.currentBob = 0;
 }
@@ -143,8 +150,8 @@ function spawnCurrent() {
 function updateCurrent() {
   if (!state.current) return;
   state.current.x += state.speed * state.direction;
-  if (state.current.x + state.current.width >= canvas.width) {
-    state.current.x = canvas.width - state.current.width;
+  if (state.current.x + state.current.width >= view.w) {
+    state.current.x = view.w - state.current.width;
     state.direction = -1;
   } else if (state.current.x <= 0) {
     state.current.x = 0;
@@ -157,11 +164,11 @@ function drawBackground() {
   const t = Math.min(1, state.score / 60);
   const topColor = `hsl(${220 - t * 80}, 50%, ${15 + t * 10}%)`;
   const botColor = `hsl(${230 - t * 80}, 40%, ${6 + t * 6}%)`;
-  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  const grad = ctx.createLinearGradient(0, 0, 0, view.h);
   grad.addColorStop(0, topColor);
   grad.addColorStop(1, botColor);
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, view.w, view.h);
   drawStars();
 }
 
@@ -169,8 +176,8 @@ function drawStars() {
   ctx.fillStyle = 'rgba(255,255,255,0.4)';
   const offset = state.cameraY * 0.2;
   for (let i = 0; i < 60; i++) {
-    const x = (i * 97) % canvas.width;
-    const y = ((i * 53 + offset) % canvas.height + canvas.height) % canvas.height;
+    const x = (i * 97) % view.w;
+    const y = ((i * 53 + offset) % view.h + view.h) % view.h;
     const size = (i % 3 === 0) ? 2 : 1;
     ctx.fillRect(x, y, size, size);
   }
@@ -179,7 +186,7 @@ function drawStars() {
 function updateCamera() {
   const top = state.blocks[state.blocks.length - 1];
   if (!top) return;
-  const target = Math.min(0, top.y - canvas.height * 0.35);
+  const target = Math.min(0, top.y - view.h * 0.35);
   state.cameraY += (target - state.cameraY) * 0.1;
 }
 
@@ -190,7 +197,7 @@ function updateFragments() {
     f.x += f.vx;
     f.rot += f.vrot;
   }
-  state.fragments = state.fragments.filter(f => (f.y - state.cameraY) < canvas.height + 200);
+  state.fragments = state.fragments.filter(f => (f.y - state.cameraY) < view.h + 200);
 }
 
 function updateParticles() {
@@ -240,7 +247,7 @@ function render() {
   drawParticles();
   if (state.flash > 0) {
     ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.25})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, view.w, view.h);
   }
   drawCombo();
   drawHUD();
@@ -337,46 +344,46 @@ function drawCombo() {
   ctx.fillStyle = '#feca57';
   ctx.font = 'bold 22px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('x' + state.combo + ' COMBO', canvas.width / 2, 140);
+  ctx.fillText('x' + state.combo + ' COMBO', view.w / 2, 140);
 }
 
 function drawHUD() {
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 56px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(String(state.score), canvas.width / 2, 80);
+  ctx.fillText(String(state.score), view.w / 2, 80);
   ctx.font = '14px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.fillText('BEST ' + state.best, canvas.width / 2, 105);
+  ctx.fillText('BEST ' + state.best, view.w / 2, 105);
   if (!state.running && !state.over) drawStartOverlay();
   if (state.over) drawGameOverOverlay();
 }
 
 function drawStartOverlay() {
   ctx.fillStyle = 'rgba(0,0,0,0.45)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, view.w, view.h);
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 48px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('TOWER BLOCK', canvas.width / 2, canvas.height / 2 - 20);
+  ctx.fillText('TOWER BLOCK', view.w / 2, view.h / 2 - 20);
   ctx.font = '18px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.fillText('Click, tap or press SPACE to start', canvas.width / 2, canvas.height / 2 + 20);
+  ctx.fillText('Click, tap or press SPACE to start', view.w / 2, view.h / 2 + 20);
 }
 
 function drawGameOverOverlay() {
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, view.w, view.h);
   ctx.fillStyle = '#ff6b6b';
   ctx.font = 'bold 48px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 30);
+  ctx.fillText('GAME OVER', view.w / 2, view.h / 2 - 30);
   ctx.fillStyle = '#fff';
   ctx.font = '22px sans-serif';
-  ctx.fillText('Score: ' + state.score + '  ·  Best: ' + state.best, canvas.width / 2, canvas.height / 2 + 10);
+  ctx.fillText('Score: ' + state.score + '  ·  Best: ' + state.best, view.w / 2, view.h / 2 + 10);
   ctx.font = '16px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fillText('Click or press SPACE to retry', canvas.width / 2, canvas.height / 2 + 45);
+  ctx.fillText('Click or press SPACE to retry', view.w / 2, view.h / 2 + 45);
 }
 
 const muteBtn = document.getElementById('muteBtn');

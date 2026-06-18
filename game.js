@@ -68,10 +68,19 @@ function updateCurrent() {
   }
 }
 
+function drawBackground() {
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, '#1a2238');
+  grad.addColorStop(1, '#0e1422');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 function render() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBackground();
   for (const b of state.blocks) drawBlock(b);
   if (state.current) drawBlock(state.current);
+  drawHUD();
 }
 
 function loop() {
@@ -115,6 +124,13 @@ function handleInput(e) {
 window.addEventListener('keydown', handleInput);
 canvas.addEventListener('click', handleInput);
 canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, { passive: false });
+
+function drawHUD() {
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 32px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(String(state.score), canvas.width / 2, 60);
+}
 
 initGame();
 loop();

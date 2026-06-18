@@ -79,8 +79,16 @@ function drawBackground() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function updateCamera() {
+  const top = state.blocks[state.blocks.length - 1];
+  if (!top) return;
+  const target = Math.min(0, top.y - canvas.height * 0.35);
+  state.cameraY += (target - state.cameraY) * 0.1;
+}
+
 function render() {
   drawBackground();
+  updateCamera();
   for (const b of state.blocks) drawBlock(b);
   if (state.current) drawBlock(state.current);
   drawHUD();

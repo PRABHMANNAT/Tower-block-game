@@ -114,6 +114,9 @@ function drawBlock(block) {
 
 function initGame() {
   state.blocks = [];
+  state.fragments = [];
+  state.particles = [];
+  state.flash = 0;
   state.score = 0;
   state.speed = 2;
   state.direction = 1;

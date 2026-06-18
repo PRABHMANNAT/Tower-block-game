@@ -23,6 +23,8 @@ try { storedBest = parseInt(localStorage.getItem('tb_best') || '0', 10) || 0; } 
 const state = {
   blocks: [],
   fragments: [],
+  particles: [],
+  flash: 0,
   current: null,
   score: 0,
   best: storedBest,
@@ -139,6 +141,26 @@ function updateFragments() {
   state.fragments = state.fragments.filter(f => (f.y - state.cameraY) < canvas.height + 200);
 }
 
+function updateParticles() {
+  for (const p of state.particles) {
+    p.vy += 0.15;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.02;
+  }
+  state.particles = state.particles.filter(p => p.life > 0);
+  state.flash = Math.max(0, state.flash - 0.04);
+}
+
+function drawParticles() {
+  for (const p of state.particles) {
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - 3, p.y - state.cameraY - 3, 6, 6);
+  }
+  ctx.globalAlpha = 1;
+}
+
 function drawFragment(f) {
   const screenY = f.y - state.cameraY;
   ctx.save();
@@ -153,9 +175,15 @@ function render() {
   drawBackground();
   updateCamera();
   updateFragments();
+  updateParticles();
   for (const b of state.blocks) drawBlock(b);
   for (const f of state.fragments) drawFragment(f);
   if (state.current) drawBlock(state.current);
+  drawParticles();
+  if (state.flash > 0) {
+    ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.25})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
   drawHUD();
 }
 
@@ -181,7 +209,9 @@ function dropBlock() {
   state.current.x = left;
   state.current.width = overlap;
   state.blocks.push(state.current);
-  state.score += 1;
+  const perfect = Math.abs(overlap - top.width) < 2;
+  state.score += perfect ? 3 : 1;
+  if (perfect) onPerfect(state.current);
   if (state.score > state.best) {
     state.best = state.score;
     try { localStorage.setItem('tb_best', String(state.best)); } catch (_) {}
@@ -191,7 +221,22 @@ function dropBlock() {
 }
 
 function onGameOver() {
-  // hook for sound/effects
+  playFail();
+}
+
+function onPerfect(block) {
+  state.flash = 1;
+  for (let i = 0; i < 14; i++) {
+    state.particles.push({
+      x: block.x + Math.random() * block.width,
+      y: block.y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: -Math.random() * 4 - 1,
+      life: 1,
+      color: block.color,
+    });
+  }
+  playPerfect();
 }
 
 function handleInput(e) {

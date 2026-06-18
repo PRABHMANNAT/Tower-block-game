@@ -20,6 +20,34 @@ const COLORS = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd', '#ff9ff3'
 let storedBest = 0;
 try { storedBest = parseInt(localStorage.getItem('tb_best') || '0', 10) || 0; } catch (_) {}
 
+let audioCtx = null;
+let muted = false;
+try { muted = localStorage.getItem('tb_muted') === '1'; } catch (_) {}
+
+function ensureAudio() {
+  if (!audioCtx && typeof AudioContext !== 'undefined') audioCtx = new AudioContext();
+  else if (!audioCtx && typeof webkitAudioContext !== 'undefined') audioCtx = new webkitAudioContext();
+}
+
+function beep(freq, duration, type) {
+  if (muted) return;
+  ensureAudio();
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'square';
+  osc.frequency.value = freq;
+  gain.gain.value = 0.08;
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playPlace() { beep(440, 0.08, 'square'); }
+function playPerfect() { beep(880, 0.1, 'triangle'); setTimeout(() => beep(1320, 0.12, 'triangle'), 60); }
+function playFail() { beep(140, 0.4, 'sawtooth'); }
+
 const state = {
   blocks: [],
   fragments: [],
@@ -217,6 +245,7 @@ function dropBlock() {
     try { localStorage.setItem('tb_best', String(state.best)); } catch (_) {}
   }
   state.speed += 0.15;
+  if (!perfect) playPlace();
   spawnCurrent();
 }
 

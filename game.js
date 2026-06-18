@@ -79,3 +79,21 @@ function loop() {
   render();
   requestAnimationFrame(loop);
 }
+
+function dropBlock() {
+  if (!state.running || state.over || !state.current) return;
+  const top = state.blocks[state.blocks.length - 1];
+  const left = Math.max(state.current.x, top.x);
+  const right = Math.min(state.current.x + state.current.width, top.x + top.width);
+  const overlap = right - left;
+  if (overlap <= 0) {
+    state.over = true;
+    return;
+  }
+  state.current.x = left;
+  state.current.width = overlap;
+  state.blocks.push(state.current);
+  state.score += 1;
+  state.speed += 0.15;
+  spawnCurrent();
+}

@@ -28,3 +28,9 @@ const state = {
 function Block(x, y, width, color) {
   return { x, y, width, height: BLOCK_HEIGHT, color };
 }
+
+function drawBlock(block) {
+  const screenY = block.y - state.cameraY;
+  ctx.fillStyle = block.color;
+  ctx.fillRect(block.x, screenY, block.width, block.height);
+}

@@ -53,4 +53,17 @@ function spawnCurrent() {
   const colorIndex = state.blocks.length % COLORS.length;
   state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, COLORS[colorIndex]);
   state.direction = Math.random() < 0.5 ? 1 : -1;
+  if (state.direction < 0) state.current.x = canvas.width - state.current.width;
+}
+
+function updateCurrent() {
+  if (!state.current) return;
+  state.current.x += state.speed * state.direction;
+  if (state.current.x + state.current.width >= canvas.width) {
+    state.current.x = canvas.width - state.current.width;
+    state.direction = -1;
+  } else if (state.current.x <= 0) {
+    state.current.x = 0;
+    state.direction = 1;
+  }
 }

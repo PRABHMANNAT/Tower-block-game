@@ -254,7 +254,7 @@ function render() {
 }
 
 function loop() {
-  if (state.running && !state.over) updateCurrent();
+  if (state.running && !state.over && !state.paused) updateCurrent();
   render();
   requestAnimationFrame(loop);
 }
@@ -338,6 +338,8 @@ function handleInput(e) {
 window.addEventListener('keydown', handleInput);
 canvas.addEventListener('click', handleInput);
 canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, { passive: false });
+window.addEventListener('blur', () => { state.paused = true; });
+window.addEventListener('focus', () => { state.paused = false; });
 
 function drawCombo() {
   if (!state.combo || state.combo < 2) return;

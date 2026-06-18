@@ -13,11 +13,14 @@ const BLOCK_HEIGHT = 30;
 const INITIAL_BLOCK_WIDTH = 200;
 const COLORS = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd', '#ff9ff3'];
 
+let storedBest = 0;
+try { storedBest = parseInt(localStorage.getItem('tb_best') || '0', 10) || 0; } catch (_) {}
+
 const state = {
   blocks: [],
   current: null,
   score: 0,
-  best: 0,
+  best: storedBest,
   speed: 2,
   direction: 1,
   running: false,
@@ -103,6 +106,10 @@ function dropBlock() {
   state.current.width = overlap;
   state.blocks.push(state.current);
   state.score += 1;
+  if (state.score > state.best) {
+    state.best = state.score;
+    try { localStorage.setItem('tb_best', String(state.best)); } catch (_) {}
+  }
   state.speed += 0.15;
   spawnCurrent();
 }

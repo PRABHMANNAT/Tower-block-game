@@ -36,6 +36,12 @@ function drawBlock(block) {
   const screenY = block.y - state.cameraY;
   ctx.fillStyle = block.color;
   ctx.fillRect(block.x, screenY, block.width, block.height);
+  // top highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.fillRect(block.x, screenY, block.width, 4);
+  // bottom shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fillRect(block.x, screenY + block.height - 4, block.width, 4);
 }
 
 function initGame() {

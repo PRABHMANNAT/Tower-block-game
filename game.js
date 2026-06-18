@@ -115,3 +115,6 @@ function handleInput(e) {
 window.addEventListener('keydown', handleInput);
 canvas.addEventListener('click', handleInput);
 canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, { passive: false });
+
+initGame();
+loop();

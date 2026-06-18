@@ -34,3 +34,15 @@ function drawBlock(block) {
   ctx.fillStyle = block.color;
   ctx.fillRect(block.x, screenY, block.width, block.height);
 }
+
+function initGame() {
+  state.blocks = [];
+  state.score = 0;
+  state.speed = 2;
+  state.direction = 1;
+  state.cameraY = 0;
+  state.over = false;
+  const baseX = (canvas.width - INITIAL_BLOCK_WIDTH) / 2;
+  const baseY = canvas.height - BLOCK_HEIGHT * 2;
+  state.blocks.push(Block(baseX, baseY, INITIAL_BLOCK_WIDTH, COLORS[0]));
+}

@@ -371,10 +371,15 @@ function drawStartOverlay() {
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 48px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('TOWER BLOCK', view.w / 2, view.h / 2 - 20);
+  ctx.fillText('TOWER BLOCK', view.w / 2, view.h / 2 - 30);
   ctx.font = '18px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.fillText('Click, tap or press SPACE to start', view.w / 2, view.h / 2 + 20);
+  ctx.fillText('Click, tap or press SPACE to start', view.w / 2, view.h / 2 + 10);
+  if (state.best > 0) {
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillText('Best so far: ' + state.best, view.w / 2, view.h / 2 + 38);
+  }
 }
 
 function drawGameOverOverlay() {

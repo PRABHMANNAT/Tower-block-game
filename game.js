@@ -11,6 +11,10 @@ resize();
 
 const BLOCK_HEIGHT = 30;
 const INITIAL_BLOCK_WIDTH = 200;
+function hslColor(i) {
+  const hue = (i * 18) % 360;
+  return `hsl(${hue}, 70%, 60%)`;
+}
 const COLORS = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#5f27cd', '#ff9ff3'];
 
 let storedBest = 0;
@@ -87,14 +91,13 @@ function initGame() {
   state.over = false;
   const baseX = (canvas.width - INITIAL_BLOCK_WIDTH) / 2;
   const baseY = canvas.height - BLOCK_HEIGHT * 2;
-  state.blocks.push(Block(baseX, baseY, INITIAL_BLOCK_WIDTH, COLORS[0]));
+  state.blocks.push(Block(baseX, baseY, INITIAL_BLOCK_WIDTH, hslColor(0)));
   spawnCurrent();
 }
 
 function spawnCurrent() {
   const top = state.blocks[state.blocks.length - 1];
-  const colorIndex = state.blocks.length % COLORS.length;
-  state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, COLORS[colorIndex]);
+  state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, hslColor(state.blocks.length));
   state.direction = Math.random() < 0.5 ? 1 : -1;
   if (state.direction < 0) state.current.x = canvas.width - state.current.width;
 }

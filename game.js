@@ -24,3 +24,7 @@ const state = {
   over: false,
   cameraY: 0,
 };
+
+function Block(x, y, width, color) {
+  return { x, y, width, height: BLOCK_HEIGHT, color };
+}

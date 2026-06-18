@@ -134,9 +134,12 @@ canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e
 
 function drawHUD() {
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 32px sans-serif';
+  ctx.font = 'bold 56px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(String(state.score), canvas.width / 2, 60);
+  ctx.fillText(String(state.score), canvas.width / 2, 80);
+  ctx.font = '14px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillText('BEST ' + state.best, canvas.width / 2, 105);
 }
 
 initGame();

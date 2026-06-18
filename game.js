@@ -97,3 +97,21 @@ function dropBlock() {
   state.speed += 0.15;
   spawnCurrent();
 }
+
+function handleInput(e) {
+  if (e.type === 'keydown' && e.code !== 'Space') return;
+  if (state.over) {
+    initGame();
+    state.running = true;
+    return;
+  }
+  if (!state.running) {
+    state.running = true;
+    return;
+  }
+  dropBlock();
+}
+
+window.addEventListener('keydown', handleInput);
+canvas.addEventListener('click', handleInput);
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, { passive: false });

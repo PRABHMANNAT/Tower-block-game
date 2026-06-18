@@ -348,13 +348,14 @@ function drawCombo() {
 }
 
 function drawHUD() {
+  const level = Math.floor(state.score / 10) + 1;
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 56px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(String(state.score), view.w / 2, 80);
   ctx.font = '14px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.fillText('BEST ' + state.best, view.w / 2, 105);
+  ctx.fillText('BEST ' + state.best + '  ·  LV ' + level, view.w / 2, 105);
   if (!state.running && !state.over) drawStartOverlay();
   if (state.over) drawGameOverOverlay();
 }

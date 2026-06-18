@@ -45,4 +45,12 @@ function initGame() {
   const baseX = (canvas.width - INITIAL_BLOCK_WIDTH) / 2;
   const baseY = canvas.height - BLOCK_HEIGHT * 2;
   state.blocks.push(Block(baseX, baseY, INITIAL_BLOCK_WIDTH, COLORS[0]));
+  spawnCurrent();
+}
+
+function spawnCurrent() {
+  const top = state.blocks[state.blocks.length - 1];
+  const colorIndex = state.blocks.length % COLORS.length;
+  state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, COLORS[colorIndex]);
+  state.direction = Math.random() < 0.5 ? 1 : -1;
 }

@@ -18,6 +18,7 @@ try { storedBest = parseInt(localStorage.getItem('tb_best') || '0', 10) || 0; } 
 
 const state = {
   blocks: [],
+  fragments: [],
   current: null,
   score: 0,
   best: storedBest,
@@ -27,6 +28,39 @@ const state = {
   over: false,
   cameraY: 0,
 };
+
+function spawnFragment(top, left, right) {
+  if (!state.current) return;
+  // left overhang
+  if (state.current.x < left) {
+    state.fragments.push({
+      x: state.current.x,
+      y: state.current.y,
+      width: left - state.current.x,
+      height: BLOCK_HEIGHT,
+      vy: 0,
+      vx: -2,
+      rot: 0,
+      vrot: -0.05,
+      color: state.current.color,
+    });
+  }
+  // right overhang
+  const curRight = state.current.x + state.current.width;
+  if (curRight > right) {
+    state.fragments.push({
+      x: right,
+      y: state.current.y,
+      width: curRight - right,
+      height: BLOCK_HEIGHT,
+      vy: 0,
+      vx: 2,
+      rot: 0,
+      vrot: 0.05,
+      color: state.current.color,
+    });
+  }
+}
 
 function Block(x, y, width, color) {
   return { x, y, width, height: BLOCK_HEIGHT, color };
@@ -114,8 +148,11 @@ function dropBlock() {
   const overlap = right - left;
   if (overlap <= 0) {
     state.over = true;
+    onGameOver();
     return;
   }
+  // spawn falling chunk fragment for trimmed portion
+  spawnFragment(top, left, right);
   state.current.x = left;
   state.current.width = overlap;
   state.blocks.push(state.current);
@@ -126,6 +163,10 @@ function dropBlock() {
   }
   state.speed += 0.15;
   spawnCurrent();
+}
+
+function onGameOver() {
+  // hook for sound/effects
 }
 
 function handleInput(e) {

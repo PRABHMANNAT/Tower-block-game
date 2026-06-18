@@ -312,6 +312,20 @@ function dropBlock() {
 
 function onGameOver() {
   playFail();
+  state.shake = 14;
+  // explode the top block
+  const top = state.blocks[state.blocks.length - 1];
+  if (top) {
+    state.blocks.pop();
+    state.fragments.push({
+      x: top.x, y: top.y, width: top.width / 2, height: top.height,
+      vx: -3, vy: -4, rot: 0, vrot: -0.1, color: top.color,
+    });
+    state.fragments.push({
+      x: top.x + top.width / 2, y: top.y, width: top.width / 2, height: top.height,
+      vx: 3, vy: -4, rot: 0, vrot: 0.1, color: top.color,
+    });
+  }
 }
 
 function onPerfect(block) {

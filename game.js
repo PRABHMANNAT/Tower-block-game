@@ -311,7 +311,11 @@ function onPerfect(block) {
 }
 
 function handleInput(e) {
-  if (e.type === 'keydown' && e.code !== 'Space') return;
+  if (e.type === 'keydown') {
+    if (e.code !== 'Space' && e.code !== 'Enter' && e.code !== 'ArrowDown') return;
+    e.preventDefault();
+  }
+  ensureAudio();
   if (state.over) {
     initGame();
     state.running = true;

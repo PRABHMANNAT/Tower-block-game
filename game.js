@@ -126,10 +126,32 @@ function updateCamera() {
   state.cameraY += (target - state.cameraY) * 0.1;
 }
 
+function updateFragments() {
+  for (const f of state.fragments) {
+    f.vy += 0.6;
+    f.y += f.vy;
+    f.x += f.vx;
+    f.rot += f.vrot;
+  }
+  state.fragments = state.fragments.filter(f => (f.y - state.cameraY) < canvas.height + 200);
+}
+
+function drawFragment(f) {
+  const screenY = f.y - state.cameraY;
+  ctx.save();
+  ctx.translate(f.x + f.width / 2, screenY + f.height / 2);
+  ctx.rotate(f.rot);
+  ctx.fillStyle = f.color;
+  ctx.fillRect(-f.width / 2, -f.height / 2, f.width, f.height);
+  ctx.restore();
+}
+
 function render() {
   drawBackground();
   updateCamera();
+  updateFragments();
   for (const b of state.blocks) drawBlock(b);
+  for (const f of state.fragments) drawFragment(f);
   if (state.current) drawBlock(state.current);
   drawHUD();
 }

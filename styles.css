@@ -13,3 +13,18 @@ body {
   height: 100vh;
   cursor: pointer;
 }
+
+#muteBtn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font: 600 12px/1 inherit;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+#muteBtn:hover { background: rgba(255,255,255,0.18); }

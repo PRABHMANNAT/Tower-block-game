@@ -325,5 +325,17 @@ function drawGameOverOverlay() {
   ctx.fillText('Click or press SPACE to retry', canvas.width / 2, canvas.height / 2 + 45);
 }
 
+const muteBtn = document.getElementById('muteBtn');
+function refreshMuteLabel() { if (muteBtn) muteBtn.textContent = muted ? 'SOUND OFF' : 'SOUND ON'; }
+if (muteBtn) {
+  refreshMuteLabel();
+  muteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    muted = !muted;
+    try { localStorage.setItem('tb_muted', muted ? '1' : '0'); } catch (_) {}
+    refreshMuteLabel();
+  });
+}
+
 initGame();
 loop();

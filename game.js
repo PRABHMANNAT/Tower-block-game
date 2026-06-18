@@ -67,3 +67,15 @@ function updateCurrent() {
     state.direction = 1;
   }
 }
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const b of state.blocks) drawBlock(b);
+  if (state.current) drawBlock(state.current);
+}
+
+function loop() {
+  if (state.running && !state.over) updateCurrent();
+  render();
+  requestAnimationFrame(loop);
+}

@@ -119,6 +119,7 @@ function initGame() {
   state.fragments = [];
   state.particles = [];
   state.flash = 0;
+  state.combo = 0;
   state.score = 0;
   state.speed = 2;
   state.direction = 1;
@@ -241,6 +242,7 @@ function render() {
     ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.25})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
+  drawCombo();
   drawHUD();
 }
 
@@ -267,8 +269,14 @@ function dropBlock() {
   state.current.width = overlap;
   state.blocks.push(state.current);
   const perfect = Math.abs(overlap - top.width) < 2;
-  state.score += perfect ? 3 : 1;
-  if (perfect) onPerfect(state.current);
+  if (perfect) {
+    state.combo = (state.combo || 0) + 1;
+    state.score += 1 + state.combo * 2;
+    onPerfect(state.current);
+  } else {
+    state.combo = 0;
+    state.score += 1;
+  }
   if (state.score > state.best) {
     state.best = state.score;
     try { localStorage.setItem('tb_best', String(state.best)); } catch (_) {}
@@ -319,6 +327,14 @@ function handleInput(e) {
 window.addEventListener('keydown', handleInput);
 canvas.addEventListener('click', handleInput);
 canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, { passive: false });
+
+function drawCombo() {
+  if (!state.combo || state.combo < 2) return;
+  ctx.fillStyle = '#feca57';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('x' + state.combo + ' COMBO', canvas.width / 2, 140);
+}
 
 function drawHUD() {
   ctx.fillStyle = '#fff';

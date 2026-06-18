@@ -111,12 +111,15 @@ function Block(x, y, width, color) {
 
 function drawBlock(block) {
   const screenY = block.y - state.cameraY;
+  // drop shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(block.x + 3, screenY + 4, block.width, block.height);
   ctx.fillStyle = block.color;
   ctx.fillRect(block.x, screenY, block.width, block.height);
   // top highlight
   ctx.fillStyle = 'rgba(255,255,255,0.18)';
   ctx.fillRect(block.x, screenY, block.width, 4);
-  // bottom shadow
+  // bottom shadow strip
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(block.x, screenY + block.height - 4, block.width, 4);
 }

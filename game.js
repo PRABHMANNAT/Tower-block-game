@@ -135,6 +135,8 @@ function spawnCurrent() {
   state.current = Block(0, top.y - BLOCK_HEIGHT, top.width, hslColor(state.blocks.length));
   state.direction = Math.random() < 0.5 ? 1 : -1;
   if (state.direction < 0) state.current.x = canvas.width - state.current.width;
+  // alternate axis: small bob effect for visual interest
+  state.currentBob = 0;
 }
 
 function updateCurrent() {
@@ -147,6 +149,7 @@ function updateCurrent() {
     state.current.x = 0;
     state.direction = 1;
   }
+  state.currentBob = (state.currentBob || 0) + 0.12;
 }
 
 function drawBackground() {
@@ -226,7 +229,13 @@ function render() {
   updateParticles();
   for (const b of state.blocks) drawBlock(b);
   for (const f of state.fragments) drawFragment(f);
-  if (state.current) drawBlock(state.current);
+  if (state.current) {
+    const bob = Math.sin(state.currentBob || 0) * 2;
+    const orig = state.current.y;
+    state.current.y = orig + bob;
+    drawBlock(state.current);
+    state.current.y = orig;
+  }
   drawParticles();
   if (state.flash > 0) {
     ctx.fillStyle = `rgba(255,255,255,${state.flash * 0.25})`;

@@ -387,9 +387,14 @@ function drawGameOverOverlay() {
   ctx.fillStyle = '#fff';
   ctx.font = '22px sans-serif';
   ctx.fillText('Score: ' + state.score + '  ·  Best: ' + state.best, view.w / 2, view.h / 2 + 10);
+  if (state.score > 0 && state.score === state.best) {
+    ctx.fillStyle = '#feca57';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('NEW BEST!', view.w / 2, view.h / 2 + 38);
+  }
   ctx.font = '16px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fillText('Click or press SPACE to retry', view.w / 2, view.h / 2 + 45);
+  ctx.fillText('Click or press SPACE to retry', view.w / 2, view.h / 2 + 68);
 }
 
 const muteBtn = document.getElementById('muteBtn');
